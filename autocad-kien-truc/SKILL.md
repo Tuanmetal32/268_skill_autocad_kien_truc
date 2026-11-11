@@ -5,7 +5,7 @@ description: Vẽ bản vẽ kiến trúc và kết cấu trong AutoCAD (qua MCP
 
 # Vẽ kiến trúc / kết cấu theo template "Kien truc Arch.dwt"
 
-Template gốc: `template/Kien truc Arch.dwt` (đi kèm skill). Copy vào thư mục Template của AutoCAD (`%LOCALAPPDATA%\Autodesk\AutoCAD <phiên bản>\R<..>\enu\Template\`) hoặc mở trực tiếp rồi **Save As .dwg**.
+Template gốc: `C:\Users\Tuanmetal32\AppData\Local\Autodesk\AutoCAD 2025\R25.0\enu\Template\Kien truc Arch.dwt`
 Đơn vị: **mm** (INSUNITS=4), vẽ model space **tỷ lệ 1:1** (tường 220 thì vẽ 220).
 Danh mục block chi tiết: xem [blocks.md](blocks.md). Đoạn LISP hỗ trợ: [helpers.lsp](helpers.lsp).
 
@@ -16,7 +16,7 @@ Danh mục block chi tiết: xem [blocks.md](blocks.md). Đoạn LISP hỗ trợ
    (LISP: `(command "_.NEW" "<đường dẫn template>")`) hoặc hỏi người dùng — **không tự tạo layer lạ**.
 3. Hỏi/chốt **tỷ lệ bản vẽ 1:N** (mặc định mặt bằng 1:100, chi tiết 1:20–1:50). Mọi cỡ chữ, dim style, scale ký hiệu suy ra từ N (mục 3).
 4. Nạp helper (một lần mỗi phiên AutoCAD): `system execute_lisp` với
-   `(load "<đường dẫn thư mục skill>/helpers.lsp")` → trả về "kt helpers loaded".
+   `(load "D:/01. JOB/01. Mr. Tuan/Other/Training/Claude/.claude/skills/autocad-kien-truc/helpers.lsp")` → trả về "kt helpers loaded".
    Sau đó gọi `(kt:scale N)` để đặt k, dim style A3-N và LTSCALE.
 5. Vẽ theo thứ tự: trục → cột/vách → tường → cửa → nội thất/thiết bị → hatch → kích thước → text/ký hiệu.
 6. Mỗi đối tượng **phải nằm đúng layer** (bảng mục 1). Màu, linetype, lineweight để **ByLayer** — không gán đè.
@@ -123,19 +123,19 @@ Scale ký hiệu = **k** (template mẫu dùng 0.75–0.9 ứng với ~1:100 có
 ## 5. Mẫu quy trình
 
 ### Mặt bằng kiến trúc — CHUẨN TRÌNH BÀY THEO BẢN MẪU CỦA NGƯỜI DÙNG (ưu tiên hơn mục 3)
-Bản mẫu "phương án nhà phố" (mặt bằng tầng 1, dim style A3-50). Giá trị dưới là kích thước thật trong model:
+Bản mẫu "01. Phuong an nha a Duong" (mặt bằng tầng 1, dim style A3-50). Giá trị dưới là kích thước thật trong model:
 
 | Thành phần | Quy cách |
 |---|---|
 | Tên phòng | text h**132**, `Thang - Tieu De`, G-Text, căn giữa (Center), dạng `P.KHÁCH`, `P.NGỦ`, `P.BẾP + ĂN`, `P.WC1`… |
 | Diện tích | dòng ngay dưới tên (baseline thấp hơn 181), h**100**, dạng `DT 15.2M2` (1 số lẻ, m², tính thông thủy) → `kt:room` |
 | Tiêu đề | `MẶT BẰNG TẦNG 1` h**200**, căn giữa, cách bóng trục dưới cùng ≈1460; không ghi dòng tỷ lệ |
-| Số bậc thang | đánh số **lẻ** 1,3,5,7,9 (mỗi số ở tâm 2 bậc, h**100**, căn giữa, cạnh mũi tên đi lên ~110), **kết thúc tại 9**; không dùng chữ "LÊN" → `kt:stairodd` |
+| Số bậc thang | đánh số **lẻ** 1,3,5,… (mỗi số ở tâm 2 bậc, h**100**, căn giữa, cạnh mũi tên đi lên ~110) **theo số bậc thực** (tầng 1 tối ưu 21 bậc → 1…21, xem skill `Soat_ban_ve_kien_truc` A3); không dùng chữ "LÊN" → `kt:stairodd2` |
 | Bậc thang | chia **2 phần**: một phần nét **đậm** (G-Thay, vế thấy/bị cắt), một phần nét **mảnh** (G-Manh), ngăn bởi đường gãy khúc |
 | Thang và tường | Thang **không xâm lấn** tường: mép ngoài thang (kể cả chiếu nghỉ) tựa đúng **mặt tường**, không vượt qua mặt tường vào lõi tường (tường 220 chạy dọc thang vẽ thêm khi cần). Mọi nét thang (bậc, nét gãy, mũi tên, số bậc) dời **cùng một vector**; chọn bằng cửa sổ **W** (bao kín) để không kéo theo tường. Kiểm tra: không còn nét thừa chồng lên tường hoặc kéo dài quá bậc cuối |
 | Tường qua cột | nét tường (G-Cat) **chạy suốt qua cột**, không ngắt tại cột → gọi `kt:walls ws nil T` (cols = nil, không trừ cột); cột vẽ đè lên |
 | Ký hiệu trục | block `ky hieu truc` scale **0.5**, layer **G-Tim**, ở **cả hai đầu** trục; tâm bóng cách đầu đường tim 172 → `kt:axis` |
-| Đường tim | G-Tim, linetype scale 0.5, dừng cách đường dim tổng ≈170 |
+| Đường tim | G-Tim, linetype scale 0.5, dừng cách đường dim ngoài cùng **300** (mép bóng trục cách dim ≈ 300) |
 | Cao độ | `Coskhac` scale **0.55** → `kt:cos` |
 | Dim | style **A3-50**, override **DIMFXLON=1, DIMFXL=500** (chân dim cố định) → `kt:dim` tự gán (`*kt-dimfxl*`) |
 | Dim 2 lớp mỗi phía | lớp 1 (chuỗi): mép tường ngoài → các trục → mép tường ngoài, cách mép tường **1140**; lớp 2 (tổng): mép ngoài → mép ngoài, cách lớp 1 **250**. Chân dim cắt bằng `kt:cutdim` tại điểm cách đường dim chuỗi 286 về phía công trình |
@@ -147,7 +147,7 @@ Thứ tự vẽ:
 3. Tường: `kt:walls` cho toàn bộ tường (220 / 110) → nét bao G-Cat, góc giao vuông, hatch ANSI31 20·k.
 4. Cửa: chèn block cửa trên G-Cua (`cd1`, `cd2`, `cd4`, `Cua 4 canh`, `cs2`, `cs4`…), chỉnh `Distance` = khẩu độ.
 5. Nội thất / thiết bị: block trong blocks.md, layer G-Noithat (cây: G-Cay).
-6. Thang: chia 2 phần, phần đậm G-Thay, phần mảnh G-Manh; vế bị che G-Khuat; mũi tên G-Manh; số bậc lẻ 1..9 bằng `kt:stairodd`.
+6. Thang: chia 2 phần, phần đậm G-Thay, phần mảnh G-Manh; vế bị che G-Khuat; mũi tên G-Manh; số bậc lẻ 1,3,5… theo số bậc thực bằng `kt:stairodd2`. Mặt bằng **mái không vẽ cột**.
 7. Tên phòng + diện tích: `kt:room x y "P.KH\U+00C1CH" 23.1`; tránh đè lên số bậc, thiết bị.
 8. **Cao độ: mỗi khu vực một `kt:cos` và PHẢI điền giá trị**. Mặc định nếu người dùng chưa cho:
    phòng khách/phòng ở `+0.000`, sân/hè `-0.150`, WC/khu rửa/lô gia `-0.050`; hỏi lại nếu nhà có cốt khác.
@@ -163,8 +163,32 @@ Thứ tự vẽ:
 - **Khoảng cách lưới trục: mỗi nhịp ≤ 5500** (tim–tim). Nhịp lớn hơn phải chèn thêm trục ở vị trí hợp lý (ví dụ đầu cầu thang, nơi có tường hai bên đặc để đặt cột). **Không tạo trục phụ** (không dùng `1'`…): trục thêm vào là trục chính, sau đó **đánh số lại liền mạch từ 1 đến hết** theo chiều dài nhà (sửa attribute các bóng trục cũ). Đủ bộ cho trục mới: đường tim G-Tim (copy trục gần nhất, giữ linetype scale 0.5), hai bóng trục (`ky hieu truc`, đổi attribute), cột G-Betong + SOLID ở giao với tường, và **tách lại dim chuỗi** (dim 7000 → 4500 + 2500), dim tổng giữ nguyên.
 - **Nội thất phòng khách (sofa – tivi):** tivi và bộ sofa đặt đối xứng quanh **một trục chung**; cụm chữ phòng (tên + diện tích) và **cao độ** đặt **trên đúng trục đó**, ở giữa khoảng trống giữa sofa và tivi, không đè lên bàn/sofa/tivi. Thứ tự từ trên xuống: tên phòng, diện tích (cách 180), cao độ. Sofa kê sát tường trục; kệ tivi mỏng 300 sát tường đối diện.
 - **Cửa chính mở ra ngoài** (cánh quay ra phía thềm). Lật cửa bằng mirror quanh **tim tường** rồi xoá bản gốc; sau đó kiểm tra bbox đúng mặt tường phía ngoài.
-- **Nhà vệ sinh:** cửa mở áp về tường vách gần nhất, có **bạo cửa 110**; thứ tự thiết bị từ trong ra ngoài: lavabo – xí bệt – cabin tắm, **tất cả dồn về tường đối diện cửa**; vòi lavabo phải sát tường (lật lại nếu thấy ngược).
-- **Xoay bản vẽ nằm ngang** để lồng khung: xoay toàn bộ nội dung 90° quanh tâm; sau xoay **dựng lại chữ** (TEXT rotation 0, `Coskhac` và thuộc tính `ky hieu truc` rotation 0) rồi xếp lại cặp tên phòng/diện tích (tên trên, diện tích dưới) vì xoay làm hai dòng nằm ngang nhau. Tiêu đề (vd. `PHƯƠNG ÁN MẶT BẰNG TẦNG 1`, h200) đặt **dưới** mặt bằng, căn giữa.
+- **Nhà vệ sinh:** cửa mở áp về tường vách gần nhất, có **bạo cửa 110**; thiết bị dồn về tường đối diện cửa; vòi lavabo phải sát tường (lật lại nếu thấy ngược). Thứ tự thiết bị và bề rộng tối thiểu: theo skill `Soat_ban_ve_kien_truc` (C3, C4).
+- **Nhà phố luôn vẽ mặt bằng nằm ngang khổ giấy** (người dùng chốt 2026-11-11): chiều dài nhà theo phương X. Quy trình xoay (khi đã vẽ đứng): chọn toàn bộ nội dung mặt bằng (kể cả dim, trục, ký hiệu, tiêu đề), `ROTATE` **90° ngược chiều kim đồng hồ** quanh tâm mặt bằng → **mặt tiền ở bên phải**, trục số chạy 4,3,2,1 từ trái sang phải, trục chữ A ở dưới, B ở trên (mặc định; đổi chiều nếu người dùng yêu cầu). Sau xoay **dựng lại**:
+  - TEXT rotation 0; `Coskhac` và `ky hieu truc` rotation 0 (thuộc tính cũng rotation 0).
+  - Cặp tên phòng/diện tích: xoay làm hai dòng nằm cạnh nhau, đưa về **tên trên, diện tích dưới** cùng một tâm (tên cao +40, diện tích −141 so với tâm nhãn).
+  - Cao độ: dời về **dưới nhãn phòng 730**.
+  - Ký hiệu cắt `KHcat2`: giữ góc xoay (mũi tên chỉ đúng hướng nhìn), đặt lại vị trí chữ trong vòng tròn (số ở trên, `KT-xx` ở dưới, rotation 0).
+  - Tiêu đề (vd. `MẶT BẰNG TẦNG 1`, h200) đặt **dưới** mặt bằng, căn giữa, cách tâm bóng trục dưới cùng ≈ 1460.
+  - Nhiều mặt bằng xếp thành một **hàng ngang**, tâm cách nhau ≥ 30000 để không đè nhau.
+
+### Quy tắc dim bổ sung (người dùng chốt 2026-11-11, nhà phố 4,66×12 — ưu tiên hơn các số 250/1140 ở bảng trên)
+Gọi tên lớp dim từ ngoài vào: **lớp ngoài cùng = tổng**, **lớp giữa = trục**, **lớp trong = đoạn tường/lỗ mở**. Dim style `A3-50`.
+- **Khoảng cách giữa các đường dim = 220.** Vị trí cố định cho mọi phía, tính từ mép tường (hoặc từ mép phần nhô ra ngoài tường như bậc thềm, ban công): lớp trong **450**, lớp giữa **670**, lớp ngoài cùng **890**. Phía không có lớp trong thì để trống chỗ đó, các lớp còn lại không dịch vào.
+- **Lớp trục bổ sung dim 110** từ trục ra mép ngoài cột/tường ở hai đầu, cả 4 phía. Chuỗi mẫu: `0, 110, trục2, trục3, …, dài−110, dài` (trục tim cách mép ngoài 110).
+- **Lớp ngoài cùng bổ sung dim phần nhô ra** (từng bậc thềm tới bậc ngoài cùng, ban công đua) nằm **cùng đường** với dim tổng, ở phía hai đầu nhà nơi có phần nhô ra. Chuỗi mẫu: `-600, -300, 0, 12000` (thềm 2 bậc × 300), ban công đua 1200: `-1200, 0, 12000`.
+- Phía có phần nhô ra (thềm/ban công): các lớp dim đo từ **mép nhô ra ngoài cùng**, không đè lên thềm/ban công.
+- **Chân dim:** vẫn có cố định (DIMFXLON=1) nhưng **chiều dài từng lớp khác nhau** = khoảng cách từ đường dim đến đường cắt. Đường cắt cách mép tường **164** (= 450 − 286): lớp trong dài **286**, lớp giữa **506**, lớp ngoài cùng **726**. Sau khi tạo dim: `vla-put-ExtLineFixedLen` từng dim theo bảng này rồi `kt:cutdim` theo từng phía (điểm cắt cách mép tường 164).
+- **Trục/bóng trục theo dim mới:** đầu đường tim cách đường dim ngoài cùng **300** (sửa 2026-11-11, trước là 170), bóng trục cách đầu 172 (`kt:axis`) → mép bóng trục cách dim ≈ 300; đầu trục lệch từ mép nhô ra: dưới `yb−890−300`, trên `15000+890+300`, trái `−890−300`, phải `5000+890+300`; tiêu đề bản vẽ (h200, căn giữa) cách tâm bóng trục dưới cùng ≈ 1460. Khi dời lớp dim thì dời đúng đường tim, bóng trục và tiêu đề theo.
+- Khi vẽ lại dim: xoá **chỉ** DIMENSION, đường tim G-Tim, bóng trục và tiêu đề h200 trong vùng toạ độ của bản vẽ (kèm điều kiện toạ độ, xem “Lưu ý thao tác”), không đụng nội dung khác.
+
+### Quy tắc vẽ tường, cửa sổ, cửa đi bổ sung (2026-11-11)
+- **Tường:** tim tường ngoài cách mép ngoài 110 (tường 220), vách ngăn 110 theo tim; trục định vị lấy theo tim. Vẽ cả hệ bằng một lần `kt:walls` (cols = nil). **Ô cửa là khoảng hở giữa các đoạn tường** trong danh sách `ws`: tách đoạn tường tại mép ô cửa, không vẽ tường rồi cắt. Cột 220×220 (`kt:col`) đặt ở giao trục với tường ngoài.
+- **Dạ cửa:** tại **mọi ô cửa sổ** vẽ thêm **hai nét mảnh (`G-Manh`) nối hai đầu tường** qua ô cửa, một nét theo mặt trong và một nét theo mặt ngoài tường, để thể hiện dạ cửa. Cửa đi không vẽ dạ.
+- **Cửa sổ `cs2`/`cs4`:** đặt `Distance1` = bề rộng ô cửa, **`Distance` luôn = 140** (đặt theo bề dày tường 220 thì bbox lệch và cửa nhô khỏi tường). Điểm chèn = góc trái dưới ô cửa, cao độ y = mặt trong tường + (dày tường − 140)/2 để khung nằm giữa bề dày tường.
+- **Cửa đi `cd1`/`cd2`:** điểm chèn = đầu khung (jamb) tại **mặt tường phía cánh mở**; `Distance1` = bề dày tường; chiều mở: rot 0 mở +y, 90 mở −x, 180 mở −y, 270 mở +x (khi rot 90/270 điểm chèn là đầu mút tương ứng của ô cửa: rot 90 lấy mép dưới ô cửa, rot 270 lấy mép trên). `cd1`: ô cửa rộng = `Distance` + 100; `cd2`: ô cửa rộng = `Distance`. Cửa chính mở ra ngoài; cửa phòng luôn mở vào phòng. Cửa chính rộng tối thiểu 2150, nên 3300, dạng 4 cánh (`cd4`/`Cua 4 canh`) – xem `Soat_ban_ve_kien_truc` A2.
+- Block động (cửa, cửa sổ) khi đổi tham số sẽ sinh block ẩn `*U…`: bình thường. Muốn chọn chúng bằng LISP thì lọc theo **layer** (`G-Cua`), không lọc theo tên block.
+- **Thềm / ban công:** thềm vẽ `G-Thay`, ngoài mặt tiền, **mặt bậc rộng 300, cao 150**; ban công đua vẽ `G-Thay` + nét lan can `G-Manh` thụt vào 100; trên mặt bằng mái thể hiện ban công bằng nét `G-Khuat`.
 
 ### Quy tắc dim bổ sung (người dùng chốt 2026-11-11, nhà phố 4,66×12 — ưu tiên hơn các số 250/1140 ở bảng trên)
 Gọi tên lớp dim từ ngoài vào: **lớp ngoài cùng = tổng**, **lớp giữa = trục**, **lớp trong = đoạn tường/lỗ mở**. Dim style `A3-50`.
@@ -196,8 +220,30 @@ Gọi tên lớp dim từ ngoài vào: **lớp ngoài cùng = tổng**, **lớp 
 - Thép sàn: block động `Bo tri thep san` (attr `KHT` = số hiệu, `DKT` = "%%C10a200"; tham số L1, L3, D1, D2, L4, L5, `Chieu cao chu`) — mẫu chèn scale 100.
 
 ### Mặt cắt
+- **Ký hiệu cắt `KHcat2` trên mặt bằng**: đặt **ngoài vùng dim và bóng trục**, cách tường, dim, bóng trục, tiêu đề **≥ 300**. **Scale 0.5, bằng ký hiệu trục** (người dùng chốt 2026-11-11; scale 1 là quá to). Block nằm **dọc theo đường cắt** (tam giác nằm trên đường, bbox rộng 1331·scale dọc đường cắt, tức 665 ở scale 0.5; rot 0 mũi tên chỉ trái, rot 270 mũi tên chỉ lên, rot 90 chỉ xuống, rot 180 chỉ phải). Điểm chèn nằm ở **một đầu đáy tam giác**, nên tính vị trí theo mép trong của ký hiệu (mép gần mặt bằng) nằm đúng đầu đường cắt. Chèn rồi phải đặt lại chữ: số ở trên, `KT-xx` ở dưới tâm vòng tròn, rotation 0. Đường cắt (G-Manh) chạy từ mép trong ký hiệu này đến mép trong ký hiệu kia; không đặt ký hiệu đè lên tường, thềm, tường rào.
 - Phần bị cắt (sàn, dầm, tường): G-Cat / G-Betong 0.40 + hatch; phần nhìn thấy phía sau: G-Thay; khuất: G-Khuat.
 - Cao độ: `kt:cos` (block `Coskhac`, attr `+24.000`, ví dụ "+0.000", "+3.600"). Mặt cắt nội thất dùng block `mc-*`, mặt đứng dùng `md-*`.
+
+#### Chuẩn thể hiện mặt cắt đứng và mặt đứng (theo bản mẫu người dùng đưa, chốt 2026-11-11)
+Áp dụng cho mặt cắt dọc/ ngang (trục 1-4, trục A-B) và mặt đứng. Dim style **`A3-100`** (tỷ lệ 1:100), đặt tường minh vì `kt:dim` dùng DIMSTYLE hiện hành.
+1. **Cao độ và đường mức, cả hai bên.** Mỗi mức sàn (−0.450, ±0.000, +3.900, +7.500, +11.100, +11.900…) kẻ **một đường mức nét chấm gạch xuyên suốt mặt cắt** (G-Manh), kéo ra **cả bên trái lẫn bên phải** tới ký hiệu `Coskhac`, ký hiệu ở ngoài cùng, **hai bên giống nhau**. Giá trị cao độ phải điền đủ.
+2. **Dim đứng 2 lớp, cả hai bên, đối xứng.** Lớp trong: chuỗi chiều cao từng tầng (vd 450, 3900, 3600, 3600, 800); lớp ngoài: tổng cao (vd 12350). Chân dim cắt đúng đường mức (`kt:cutdim`).
+3. **Dim ngang dưới chân.** Lớp trong: 110 (tường) – các nhịp trục – 110; lớp ngoài: tổng. Dưới cùng: bóng trục rồi tiêu đề `MẶT CẮT x-x` (`Thang - Tieu De`).
+4. **Phần bị cắt:**
+   - Tường: nét bao `G-Cat` (0.40) + hatch tường `G-Hatch` kín từ nền đến sàn trên.
+   - **Sàn, dầm, lanh tô, cột bị cắt: `G-Betong` (0.40) + hatch.** Sàn mỗi tầng thể hiện chiều dày thật (≈ 120–150); dầm dưới sàn là phần nhô xuống ở vị trí trục có dầm.
+   - **Sàn phải kéo hết bề rộng tường** (kể cả tường tum, tường biên): không được để đoạn tường nằm ngoài mép sàn; sàn mái kéo dài tới mép ngoài tường tum.
+   - Móng/ nền: dưới ±0.000 đến −0.450 thể hiện nền đất/ bê tông bằng hatch đậm; chân tường rộng hơn thân tường.
+5. **Phần thấy phía sau (nét mảnh):**
+   - **Cột trong nhà** (cột không bị cắt) vẽ bằng **hai nét đứng mảnh** `G-Manh` đúng bề rộng cột, theo từng tầng giữa hai sàn (không xuyên qua sàn).
+   - **Tường trên trục không bị cắt** (vd tường trục 4 có ô cửa/ cửa sổ): vẽ nét mảnh `G-Manh` nối các đoạn tường qua ô trống, để thấy tường liên tục.
+   - Cửa, cửa sổ, tủ, thiết bị thấy được: `G-Cua`, `G-Noithat` (dùng block `mc-*`/ khối chữ nhật mỏng), không hatch.
+   - Lan can, bậc thềm thấy: `G-Thay`.
+6. **Cầu thang:** vế cắt là bản thang có chiều dày, **hatch + viền `G-Betong`**; bậc nhìn thấy `G-Thay`/ `G-Manh`; chiếu nghỉ, chiếu tới là sàn cắt có hatch; tay vịn `G-Manh`. Số bậc, cao bậc khớp mặt bằng (quy tắc A3 của skill soát).
+7. **Phần đua ra (ban công, lô gia):** sàn đua vẽ liền sàn, lan can phía ngoài. **Có dim khoảng đua** (vd 1200) nằm bên dưới sàn đua, mỗi tầng một dim, dùng `A3-100`. Tầng 1 không có ban công thì **không vẽ** lan can, ron, ô nét mảnh thừa.
+8. **Tum / mái:** tường tum/ parapet thể hiện cao 800 trên sàn mái; sàn mái và **tum không đua ra ngoài ranh giới nhà** (mép ngoài tum không vượt mép tường bao, trừ khi có ban công đua đã dim).
+9. **Mặt đứng riêng:** cùng quy tắc 1–3 (cao độ, dim đứng 2 lớp hai bên, dim ngang tổng); bên mặt tiền không có chi tiết thừa ở tầng không có (vd tầng 1 không ban công).
+10. **Kiểm tra sau khi vẽ:** zoom từng tầng; kiểm tra (a) không còn tường ngoài sàn, (b) cột thấy đủ ở các trục, (c) dim hai bên đối xứng và cùng style `A3-100`, (d) mọi đường mức có ký hiệu cao độ cả hai bên.
 
 ## 6. Kiểm tra trước khi giao
 - Không có đối tượng trên layer `0` (trừ trong block) — đếm bằng `entity count layer=0`.
@@ -216,7 +262,7 @@ Gọi tên lớp dim từ ngoài vào: **lớp ngoài cùng = tổng**, **lớp 
   `(load "C:/Autodesk/MCP/autocad-mcp/lisp-code/mcp_dispatch.lsp")`, sau đó `system init` và nạp lại helpers.lsp.
 - Tránh lệnh `command` tương tác dài (PEDIT, HATCH…) trong execute_lisp; dùng hàm VLA/entmake trong helpers.
 
-## 8. Bài học khi vẽ công trình lớn (ví dụ công trình công cộng 17.6×19.7)
+## 8. Bài học khi vẽ công trình lớn (ví dụ nhà văn hóa 17.6×19.7)
 - `execute_lisp` timeout 10 s → chia việc thành nhiều hàm `vh:*` nhỏ (mỗi lệnh < 1 s), nạp bằng `(load "C:/temp/xxx.lsp")`; `data` của `execute_lisp` là JSON `{"code": "..."}`.
 - Không đặt tên tham số LISP là `t` (ký hiệu hằng) → lỗi "incorrect object to bind: T"; dùng `th`.
 - Chuỗi tiếng Việt trong file .lsp: viết `\U+1EACU` (hai dấu `\`) để AutoCAD ra đúng ký tự.
