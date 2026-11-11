@@ -166,7 +166,26 @@ Thứ tự vẽ:
 - **Nhà vệ sinh:** cửa mở áp về tường vách gần nhất, có **bạo cửa 110**; thứ tự thiết bị từ trong ra ngoài: lavabo – xí bệt – cabin tắm, **tất cả dồn về tường đối diện cửa**; vòi lavabo phải sát tường (lật lại nếu thấy ngược).
 - **Xoay bản vẽ nằm ngang** để lồng khung: xoay toàn bộ nội dung 90° quanh tâm; sau xoay **dựng lại chữ** (TEXT rotation 0, `Coskhac` và thuộc tính `ky hieu truc` rotation 0) rồi xếp lại cặp tên phòng/diện tích (tên trên, diện tích dưới) vì xoay làm hai dòng nằm ngang nhau. Tiêu đề (vd. `PHƯƠNG ÁN MẶT BẰNG TẦNG 1`, h200) đặt **dưới** mặt bằng, căn giữa.
 
+### Quy tắc dim bổ sung (người dùng chốt 2026-11-11, nhà phố 4,66×12 — ưu tiên hơn các số 250/1140 ở bảng trên)
+Gọi tên lớp dim từ ngoài vào: **lớp ngoài cùng = tổng**, **lớp giữa = trục**, **lớp trong = đoạn tường/lỗ mở**. Dim style `A3-50`.
+- **Khoảng cách giữa các đường dim = 220.** Vị trí cố định cho mọi phía, tính từ mép tường (hoặc từ mép phần nhô ra ngoài tường như bậc thềm, ban công): lớp trong **450**, lớp giữa **670**, lớp ngoài cùng **890**. Phía không có lớp trong thì để trống chỗ đó, các lớp còn lại không dịch vào.
+- **Lớp trục bổ sung dim 110** từ trục ra mép ngoài cột/tường ở hai đầu, cả 4 phía. Chuỗi mẫu: `0, 110, trục2, trục3, …, dài−110, dài` (trục tim cách mép ngoài 110).
+- **Lớp ngoài cùng bổ sung dim phần nhô ra** (từng bậc thềm tới bậc ngoài cùng, ban công đua) nằm **cùng đường** với dim tổng, ở phía hai đầu nhà nơi có phần nhô ra. Chuỗi mẫu: `-1400, -700, 0, 12000` (thềm 2 bậc × 700), ban công đua 1200: `-1200, 0, 12000`.
+- Phía có phần nhô ra (thềm/ban công): các lớp dim đo từ **mép nhô ra ngoài cùng**, không đè lên thềm/ban công.
+- **Chân dim:** vẫn có cố định (DIMFXLON=1) nhưng **chiều dài từng lớp khác nhau** = khoảng cách từ đường dim đến đường cắt. Đường cắt cách mép tường **164** (= 450 − 286): lớp trong dài **286**, lớp giữa **506**, lớp ngoài cùng **726**. Sau khi tạo dim: `vla-put-ExtLineFixedLen` từng dim theo bảng này rồi `kt:cutdim` theo từng phía (điểm cắt cách mép tường 164).
+- **Trục/bóng trục theo dim mới:** đầu đường tim cách đường dim ngoài cùng 170, bóng trục cách đầu 172 (`kt:axis`); tiêu đề bản vẽ (h200, căn giữa) cách tâm bóng trục dưới cùng ≈ 1460. Khi dời lớp dim thì dời đúng đường tim, bóng trục và tiêu đề theo.
+- Khi vẽ lại dim: xoá **chỉ** DIMENSION, đường tim G-Tim, bóng trục và tiêu đề h200 trong vùng toạ độ của bản vẽ (kèm điều kiện toạ độ, xem “Lưu ý thao tác”), không đụng nội dung khác.
+
+### Quy tắc vẽ tường, cửa sổ, cửa đi bổ sung (2026-11-11)
+- **Tường:** tim tường ngoài cách mép ngoài 110 (tường 220), vách ngăn 110 theo tim; trục định vị lấy theo tim. Vẽ cả hệ bằng một lần `kt:walls` (cols = nil). **Ô cửa là khoảng hở giữa các đoạn tường** trong danh sách `ws`: tách đoạn tường tại mép ô cửa, không vẽ tường rồi cắt. Cột 220×220 (`kt:col`) đặt ở giao trục với tường ngoài.
+- **Dạ cửa:** tại **mọi ô cửa sổ** vẽ thêm **hai nét mảnh (`G-Manh`) nối hai đầu tường** qua ô cửa, một nét theo mặt trong và một nét theo mặt ngoài tường, để thể hiện dạ cửa. Cửa đi không vẽ dạ.
+- **Cửa sổ `cs2`/`cs4`:** đặt `Distance1` = bề rộng ô cửa, **`Distance` luôn = 140** (đặt theo bề dày tường 220 thì bbox lệch và cửa nhô khỏi tường). Điểm chèn = góc trái dưới ô cửa, cao độ y = mặt trong tường + (dày tường − 140)/2 để khung nằm giữa bề dày tường.
+- **Cửa đi `cd1`/`cd2`:** điểm chèn = đầu khung (jamb) tại **mặt tường phía cánh mở**; `Distance1` = bề dày tường; chiều mở: rot 0 mở +y, 90 mở −x, 180 mở −y, 270 mở +x (khi rot 90/270 điểm chèn là đầu mút tương ứng của ô cửa: rot 90 lấy mép dưới ô cửa, rot 270 lấy mép trên). `cd1`: ô cửa rộng = `Distance` + 100; `cd2`: ô cửa rộng = `Distance`. Cửa chính mở ra ngoài; cửa phòng mở vào phòng, hoặc mở ra sảnh/hành lang nếu bên trong chật.
+- Block động (cửa, cửa sổ) khi đổi tham số sẽ sinh block ẩn `*U…`: bình thường. Muốn chọn chúng bằng LISP thì lọc theo **layer** (`G-Cua`), không lọc theo tên block.
+- **Thềm / ban công:** thềm vẽ `G-Thay`, ngoài mặt tiền, mỗi bậc ≥ 700 để ghi cao độ; ban công đua vẽ `G-Thay` + nét lan can `G-Manh` thụt vào 100; trên mặt bằng mái thể hiện ban công bằng nét `G-Khuat`.
+
 ### Lưu ý thao tác (rút ra khi làm)
+- Trong `TEXT` tạo bằng LISP, ký tự `%` phải viết `%%%` mới hiện (`"10%%%"` → `10%`); `%%C` → Ø.
 - `ssget "C"/"W"` chỉ chọn được vật thể **đang hiện trong khung nhìn** → `zoom_window` đủ lớn trước khi chọn.
 - `ssget "X"` quét **cả bản vẽ** (có thể có nội dung khác như bản vẽ thử, block trùng tên ở xa): luôn kèm điều kiện toạ độ, hoặc kiểm tra điểm chèn nằm trong vùng đang làm trước khi mirror/xoá. Từng lật nhầm một block `cd4` ở ngoài vùng vẽ; đã lật lại.
 - Văn bản Unicode trong chuỗi LISP gửi qua MCP: dùng `\U+xxxx`.
