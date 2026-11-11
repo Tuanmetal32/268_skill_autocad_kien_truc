@@ -219,6 +219,28 @@ Gọi tên lớp dim từ ngoài vào: **lớp ngoài cùng = tổng**, **lớp 
 - Thép chủ G-Steel1, thép đai/cấu tạo G-Steel2, ghi chú thép 125·k `Thang - Ghi chu`.
 - Thép sàn: block động `Bo tri thep san` (attr `KHT` = số hiệu, `DKT` = "%%C10a200"; tham số L1, L3, D1, D2, L4, L5, `Chieu cao chu`) — mẫu chèn scale 100.
 
+### Mặt bằng móng băng và mặt cắt móng băng (theo bản mẫu người dùng đưa, 2026-11-11)
+Bản vẽ gồm: **mặt bằng kết cấu móng** (tỷ lệ như mặt bằng, dim `A3-N`), các **mặt cắt móng băng MB1, MB2**, **thép chờ cột** và **MC 1-1 (chờ cột)** vẽ tỷ lệ lớn trong cùng file, đặt cách xa nhau. Tỷ lệ chi tiết (1:20, 1:25…) và layer cụ thể của từng nét **hỏi người dùng khi vẽ**; chỉ dùng layer có sẵn (nét vàng mẫu = `G-Bo2`, thép chủ = `G-Steel1`, thép đai = `G-Steel2`, chữ xanh lá = `G-Text`, hatch = `G-Hatch`).
+
+**A. Mặt bằng móng**
+1. **Lưới trục + bóng trục cả 4 phía** (A, B, C theo cạnh dọc; 1, 2, 3 theo cạnh ngang), bóng trục hai bên trái/ phải đối xứng. Đường tim trục `G-Tim` kéo xuyên qua mặt bằng.
+2. **Dim 2 lớp mỗi phía:** lớp trong = 110 – các nhịp trục – 110; lớp ngoài = tổng (vd 7600 × 7970). Phía trái/ phải làm đối xứng.
+3. **Cột:** ô 220×220 tại **mọi giao trục** nằm trên đường bao móng, hatch BTCT, đặt đúng tim trục.
+4. **Dải móng băng chạy dọc các trục có tường/ cột.** Đường bao ngoài của dải (hình chữ nhật nối các cột) và **bản móng ở các ô giữa**: mỗi ô là một hình chữ nhật đáy móng, bên trong thụt vào một hình chữ nhật nhỏ là **mép bản móng/ chân vát**; **bốn đường chéo ở góc** nối góc ngoài với góc trong thể hiện mặt vát của bản móng (cánh móng dốc).
+5. **Móng ở biên (MB1) lệch tim, móng ở trục giữa (MB2) đối xứng qua tim.** Dim bề rộng móng ngay trên mặt bằng: tổng 1200; phần nhô mỗi phía (vd 1090 = 1200 − 110; 560/ 640 hai bên trục giữa; 600 + 600 cho móng đối xứng).
+6. **Ghi tên móng** `MÓNG BĂNG MB1`, `MB2`... bằng chữ xanh lá in đậm (`G-Text`), **xoay theo hướng dải móng**, đặt trong ô, không đè nét. Tiêu đề bản vẽ `MẶT BẰNG KẾT CẤU MÓNG` h200 căn giữa dưới bóng trục.
+
+**B. Mặt cắt móng băng (MB1: móng biên lệch tâm; MB2: móng giữa đối xứng)**
+1. **Cao độ ghi bên trái bằng `Coskhac`:** `±0.000` (COS NỀN NHÀ), `-0.450` (COS SÂN), `-1.450` (đáy móng). Đường mức nét chấm gạch kéo ngang qua mặt cắt, kèm chữ `COS NỀN NHÀ`, `COS SÂN` (chữ nhỏ `Thang - Ghi chu`).
+2. **Dim đứng 2 lớp bên trái:** lớp trong = từng đoạn (350 + 100 = 450 trên sân; 400 + 200 + 200 + 200 + 100 = 1100 từ −0.450 xuống lớp bê tông lót, trong đó 1000 là chiều sâu móng từ −0.450 đến −1.450); lớp ngoài = các tổng 450 và 1000.
+3. **Kết cấu từ trên xuống:** giằng tường (BTCT, hatch BTCT, cao 100, cạnh cos nền nhà) → **tường móng xây gạch đặc dày 220** (hatch tường, cao 350 phía trên cos sân đến mặt móng, tính theo bản mẫu) → **móng BTCT** gồm cổ móng thẳng, vai rộng 50 mỗi bên, **mặt vát nghiêng** xuống cánh móng, đáy phẳng → **bê tông lót M100#, đá 4×6, dày 100, hatch chấm**, rộng hơn móng mỗi bên 100.
+4. **MB1 (biên):** tim tường lệch về một phía; cánh móng một bên dài (900), bên kia chỉ 190 + 110 (tim tới mép ngoài) và chân thẳng. **MB2 (giữa):** đối xứng, mỗi bên cánh 450, hai bên vai 150 + 150 qua tim.
+5. **Thép:** thép chủ giằng/ móng thể hiện bằng **chấm tròn đỏ (`G-Steel1`)**; thép đai và thép phân bố là nét xanh (`G-Steel2`) ôm trong mặt cắt; thép bản móng nằm sát đáy. Ghi chú thép có **số trong vòng tròn** (1, 2) + leader: `6/φ20` (thép giằng), `φ8a150`, `THÉP BẢN MÓNG /φ12a150` (nội dung ví dụ — lấy theo tính toán/ người dùng, không tự bịa).
+6. **Dim ngang dưới chân:** lớp trong chia từng đoạn (100 – 110 – 190 – 900 – 100 cho MB1; 100 – 450 – 150 – 150 – 450 – 100 cho MB2), lớp ngoài = tổng 1200; **tim móng nối xuống bóng trục có dấu `*`** (trục móng).
+7. **Ghi chú có leader mũi tên:** `GIẰNG TƯỜNG`, `TƯỜNG MÓNG XÂY GẠCH ĐẶC`, `BÊ TÔNG LÓT M100#, ĐÁ 4×6`, `THÉP BẢN MÓNG`. Tiêu đề dưới chi tiết (`MÓNG BĂNG MB1`) chữ xanh lá in đậm có gạch chân.
+8. **Thép chờ cột (mặt cắt đứng):** thép chờ nhô **600** trên cos nền nhà, đai `φ6a150` trong cổ móng, chân thép bẻ L đặt sát đáy; ghi `THÉP CHỜ` (1), `φ6a150` (đ). **MC 1-1 (chờ cột):** ô 220×220, **lớp bảo vệ 25** mỗi phía, 4 thanh góc (chấm đỏ) `4/φ18`, đai `φ6a150`; tiêu đề `MC 1-1 (CHỜ CỘT)`.
+9. Kiểm tra: bê tông lót nằm đúng dưới đáy móng, các cos khớp nhau giữa MB1, MB2 và thép chờ cột; số bậc dim cộng bằng tổng; mọi vòng tròn số thép có chú thích tương ứng.
+
 ### Mặt cắt
 - **Ký hiệu cắt `KHcat2` trên mặt bằng**: đặt **ngoài vùng dim và bóng trục**, cách tường, dim, bóng trục, tiêu đề **≥ 300**. **Scale 0.5, bằng ký hiệu trục** (người dùng chốt 2026-11-11; scale 1 là quá to). Block nằm **dọc theo đường cắt** (tam giác nằm trên đường, bbox rộng 1331·scale dọc đường cắt, tức 665 ở scale 0.5; rot 0 mũi tên chỉ trái, rot 270 mũi tên chỉ lên, rot 90 chỉ xuống, rot 180 chỉ phải). Điểm chèn nằm ở **một đầu đáy tam giác**, nên tính vị trí theo mép trong của ký hiệu (mép gần mặt bằng) nằm đúng đầu đường cắt. Chèn rồi phải đặt lại chữ: số ở trên, `KT-xx` ở dưới tâm vòng tròn, rotation 0. Đường cắt (G-Manh) chạy từ mép trong ký hiệu này đến mép trong ký hiệu kia; không đặt ký hiệu đè lên tường, thềm, tường rào.
 - Phần bị cắt (sàn, dầm, tường): G-Cat / G-Betong 0.40 + hatch; phần nhìn thấy phía sau: G-Thay; khuất: G-Khuat.
