@@ -231,7 +231,7 @@ Bản vẽ gồm: **mặt bằng kết cấu móng** (tỷ lệ như mặt bằn
 6. **Ghi tên móng** `MÓNG BĂNG MB1`, `MB2`... bằng chữ xanh lá in đậm (`G-Text`), **xoay theo hướng dải móng**, đặt trong ô, không đè nét. Tiêu đề bản vẽ `MẶT BẰNG KẾT CẤU MÓNG` h200 căn giữa dưới bóng trục.
 
 **B. Mặt cắt móng băng (MB1: móng biên lệch tâm; MB2: móng giữa đối xứng)**
-1. **Cao độ ghi bên trái bằng `Coskhac`:** `±0.000` (COS NỀN NHÀ), `-0.450` (COS SÂN), `-1.450` (đáy móng). Đường mức nét chấm gạch kéo ngang qua mặt cắt, kèm chữ `COS NỀN NHÀ`, `COS SÂN` (chữ nhỏ `Thang - Ghi chu`).
+1. **Cao độ ghi bên trái bằng `Coskhac`:** `+0.000` (COS NỀN NHÀ), `-0.450` (COS SÂN), `-1.450` (đáy móng). Đường mức nét chấm gạch kéo ngang qua mặt cắt, kèm chữ `COS NỀN NHÀ`, `COS SÂN` (chữ nhỏ `Thang - Ghi chu`).
 2. **Dim đứng 2 lớp bên trái:** lớp trong = từng đoạn (350 + 100 = 450 trên sân; 400 + 200 + 200 + 200 + 100 = 1100 từ −0.450 xuống lớp bê tông lót, trong đó 1000 là chiều sâu móng từ −0.450 đến −1.450); lớp ngoài = các tổng 450 và 1000.
 3. **Kết cấu từ trên xuống:** giằng tường (BTCT, hatch BTCT, cao 100, cạnh cos nền nhà) → **tường móng xây gạch đặc dày 220** (hatch tường, cao 350 phía trên cos sân đến mặt móng, tính theo bản mẫu) → **móng BTCT** gồm cổ móng thẳng, vai rộng 50 mỗi bên, **mặt vát nghiêng** xuống cánh móng, đáy phẳng → **bê tông lót M100#, đá 4×6, dày 100, hatch chấm**, rộng hơn móng mỗi bên 100.
 4. **MB1 (biên):** tim tường lệch về một phía; cánh móng một bên dài (900), bên kia chỉ 190 + 110 (tim tới mép ngoài) và chân thẳng. **MB2 (giữa):** đối xứng, mỗi bên cánh 450, hai bên vai 150 + 150 qua tim.
@@ -244,18 +244,18 @@ Bản vẽ gồm: **mặt bằng kết cấu móng** (tỷ lệ như mặt bằn
 ### Mặt cắt
 - **Ký hiệu cắt `KHcat2` trên mặt bằng**: đặt **ngoài vùng dim và bóng trục**, cách tường, dim, bóng trục, tiêu đề **≥ 300**. **Scale 0.5, bằng ký hiệu trục** (người dùng chốt 2026-11-11; scale 1 là quá to). Block nằm **dọc theo đường cắt** (tam giác nằm trên đường, bbox rộng 1331·scale dọc đường cắt, tức 665 ở scale 0.5; rot 0 mũi tên chỉ trái, rot 270 mũi tên chỉ lên, rot 90 chỉ xuống, rot 180 chỉ phải). Điểm chèn nằm ở **một đầu đáy tam giác**, nên tính vị trí theo mép trong của ký hiệu (mép gần mặt bằng) nằm đúng đầu đường cắt. Chèn rồi phải đặt lại chữ: số ở trên, `KT-xx` ở dưới tâm vòng tròn, rotation 0. Đường cắt (G-Manh) chạy từ mép trong ký hiệu này đến mép trong ký hiệu kia; không đặt ký hiệu đè lên tường, thềm, tường rào.
 - Phần bị cắt (sàn, dầm, tường): G-Cat / G-Betong 0.40 + hatch; phần nhìn thấy phía sau: G-Thay; khuất: G-Khuat.
-- Cao độ: `kt:cos` (block `Coskhac`, attr `+24.000`, ví dụ "+0.000", "+3.600"). Mặt cắt nội thất dùng block `mc-*`, mặt đứng dùng `md-*`.
+- Cao độ: `kt:cos` (block `Coskhac`, attr `+24.000`, ví dụ "+0.000", "+3.600"). **Cốt nền nhà luôn ghi `+0.000` (dấu cộng), không dùng `±0.000` và không gõ `%%P`** (người dùng chốt 2026-11-11); cốt dương luôn có dấu `+`, âm có dấu `-`. Mặt cắt nội thất dùng block `mc-*`, mặt đứng dùng `md-*`.
 
 #### Chuẩn thể hiện mặt cắt đứng và mặt đứng (theo bản mẫu người dùng đưa, chốt 2026-11-11)
 Áp dụng cho mặt cắt dọc/ ngang (trục 1-4, trục A-B) và mặt đứng. Dim style **`A3-100`** (tỷ lệ 1:100), đặt tường minh vì `kt:dim` dùng DIMSTYLE hiện hành.
-1. **Cao độ và đường mức, cả hai bên.** Mỗi mức sàn (−0.450, ±0.000, +3.900, +7.500, +11.100, +11.900…) kẻ **một đường mức nét chấm gạch xuyên suốt mặt cắt** (G-Manh), kéo ra **cả bên trái lẫn bên phải** tới ký hiệu `Coskhac`, ký hiệu ở ngoài cùng, **hai bên giống nhau**. Giá trị cao độ phải điền đủ.
+1. **Cao độ và đường mức, cả hai bên.** Mỗi mức sàn (−0.450, +0.000, +3.900, +7.500, +11.100, +11.900…) kẻ **một đường mức nét chấm gạch xuyên suốt mặt cắt** (G-Manh), kéo ra **cả bên trái lẫn bên phải** tới ký hiệu `Coskhac`, ký hiệu ở ngoài cùng, **hai bên giống nhau**. Giá trị cao độ phải điền đủ.
 2. **Dim đứng 2 lớp, cả hai bên, đối xứng.** Lớp trong: chuỗi chiều cao từng tầng (vd 450, 3900, 3600, 3600, 800); lớp ngoài: tổng cao (vd 12350). Chân dim cắt đúng đường mức (`kt:cutdim`).
 3. **Dim ngang dưới chân.** Lớp trong: 110 (tường) – các nhịp trục – 110; lớp ngoài: tổng. Dưới cùng: bóng trục rồi tiêu đề `MẶT CẮT x-x` (`Thang - Tieu De`).
 4. **Phần bị cắt:**
    - Tường: nét bao `G-Cat` (0.40) + hatch tường `G-Hatch` kín từ nền đến sàn trên.
    - **Sàn, dầm, lanh tô, cột bị cắt: `G-Betong` (0.40) + hatch.** Sàn mỗi tầng thể hiện chiều dày thật (≈ 120–150); dầm dưới sàn là phần nhô xuống ở vị trí trục có dầm.
    - **Sàn phải kéo hết bề rộng tường** (kể cả tường tum, tường biên): không được để đoạn tường nằm ngoài mép sàn; sàn mái kéo dài tới mép ngoài tường tum.
-   - Móng/ nền: dưới ±0.000 đến −0.450 thể hiện nền đất/ bê tông bằng hatch đậm; chân tường rộng hơn thân tường.
+   - Móng/ nền: dưới +0.000 đến −0.450 thể hiện nền đất/ bê tông bằng hatch đậm; chân tường rộng hơn thân tường.
 5. **Phần thấy phía sau (nét mảnh):**
    - **Cột trong nhà** (cột không bị cắt) vẽ bằng **hai nét đứng mảnh** `G-Manh` đúng bề rộng cột, theo từng tầng giữa hai sàn (không xuyên qua sàn).
    - **Tường trên trục không bị cắt** (vd tường trục 4 có ô cửa/ cửa sổ): vẽ nét mảnh `G-Manh` nối các đoạn tường qua ô trống, để thấy tường liên tục.

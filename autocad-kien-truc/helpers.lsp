@@ -308,7 +308,7 @@
   n)
 
 ;; ---------- CAO DO ----------
-;; Block Coskhac, thuoc tinh that la "+24.000" (KHONG phai "+22.00"). val vd "-0.150" "+0.000" "%%P0.000"
+;; Block Coskhac, thuoc tinh that la "+24.000" (KHONG phai "+22.00"). val vd "-0.150" "+0.000" "+0.000"
 (setq *kt-cos-sc* 0.55)   ; scale cao do theo ban mau
 (defun kt:cos (x y val / e)
   (setq e (kt:ins "Coskhac" x y *kt-cos-sc* 0 "G-Text"))

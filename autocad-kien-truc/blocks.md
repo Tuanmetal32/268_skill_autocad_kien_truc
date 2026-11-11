@@ -12,7 +12,7 @@ Nội thất luôn chèn **scale 1** (kích thước thật) — chỉ ký hiệ
 | `cactn` | `A` | Ký hiệu trục ngang (chữ) có đuôi |
 | `KHcat2` | `A` = tên mặt cắt, `KT-00` = số bản vẽ | Ký hiệu mặt cắt, động: Flip state, Angle |
 | `A$C402D573F` | `01` = số chi tiết, `KT-00` = số bản vẽ | Ký hiệu trích chi tiết |
-| `doorname` | `D1`, `DIMENSION` = "2000x2000", `SILL` = "%%P0.000" | Tag cửa đi |
+| `doorname` | `D1`, `DIMENSION` = "2000x2000", `SILL` = "+0.000" | Tag cửa đi |
 | `vlc` | `N1` = "S1" | Tag cửa sổ / vách |
 | `Coskhac` | `+24.000` = giá trị cao độ (vd "+0.000", "-0.150") | Cao độ, Visibility "Mat bang". Dùng `kt:cos`, luôn điền giá trị |
 | `Bo tri thep san` | `KHT`=8, `DKT`="%%C10a200" | Thép sàn (layer 0 trong mẫu, chèn scale 100); động L1, L3, L4, L5, D1, D2, Chieu cao chu |
